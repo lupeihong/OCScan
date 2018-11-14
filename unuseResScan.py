@@ -5,14 +5,31 @@ import shutil
 
 #扫描无用资源（代码未使用）
 
-outPath = "/Users/xxx/Documents/sizetj/" #输出目录
-scanSrcPath = "/Users/xxx/Documents/xxx/svn/ios_7.8.10_maint" #获取资源的源工程
-scanSrcExtendPath = "/Users/xxx/Documents/xxx/svn/7.8.10_maint/Tiny" #扩展扫描目录
+outPath = "/Users/luph/Documents/sizetj/" #输出目录
+scanSrcPath = "/Users/luph/Documents/sizetj/entmobile-ios_7.10_composite_feature" #获取资源的源工程
+scanSrcExtendPath = "/Users/luph/Documents/luph/svn/tinyvideo-ios_7.10_feature" #扩展扫描目录
 outPods = True #是否排除pods目录
 
 #前缀白名单
-resPrefixWhiteList = ["treasureFansLevel","teampk_icon_team_","pk_png_team_","expense_lv_medal_","combo_plane_0",
-                "{zk","{zjt","{yjt","{xjt","{sjt","{kel"
+resPrefixWhiteList = ["yye_online_guardianlevel","yye_level_","treasureFansLevel","teampk_icon_team_","pk_png_team_","expense_lv_medal_","combo_plane_0",
+                "combo_lv_medal_","bg_liveroom_confession_animationBoom_",
+                "{zk","{zjt","{yjt","{xjt","{sjt","{kel",
+                "zhubodengji","yyent_gift_magician_number_","yyent_gift_magician_","yye_liansongtishi_num_","yybear_loading_",
+                "yonghudengji_","vulgarAppearAnimate","v_personal_","v_enterprise_","top_player_","tips_user card_labelling",
+                "talentLive_time_num_","shenqu_hot_top","shenqu_boardlist_no","run_medal","qinmidudengji","official_liveroom_logobg_",
+                "noble_honour_level_","myHeart","module_rank_","module_icon_","mission_quiz_pic_","majia_image_","magicDrag_down_loading_",
+                "lottery_rank_","lottery_number_","lottery_compose_","live_thumb_animator_","live_notification","live_animator_image_",
+                "knight_lv_num_","icon_wish_time_small_","icon_wish_time_big_","heart","group_image","gift_flash_number_white_",
+                "gift_flash_number_","gift_flash_bg_lower_","gift_flash_bg_","gift_flash_","follow_anchor_living","combo_number_",
+                "channel_freemode_speakingAnimation","channel_freemode_new_speakingAnimation","ch_animate_F2B_","ch_animate_B2F_",
+                "RankRome_","RankNumber_","RankMedal_","TeamPVP_GiftBox_type","TeamPVP_ico_seat_delete_","TeamPVP_ico_seat_add_",
+                "op_stock_","op_liveing_music_","正在发言_","环节介绍弹窗0","光","mf_",
+
+                "video_shoot_count-down","topicMusicAlbumCover","title_","tinyVideo_icon_color_","rank_","liveing_music2","MerryBasketball_star_",
+                "MerryBasketball_loading_","newBaseTemplate_speakingAnimation","happypk_",
+                "3d_touch_video","3d_touch_news","3d_touch_live","3d_touch_accompany","knight_lv_",
+                "TeamPVP_bg_seat_add_tips_","TeamPVP_Result_","TeamPVP_Portrait_","ic_livinig_","liveroom_",
+                "mvppk_","mutillive_setting_openmic_dis" #RN用的
                 ]
 
 tmpDir = time.strftime("TmpPro_%Y-%m-%d-%H_%M_%S",time.localtime(time.time())) 
@@ -128,72 +145,77 @@ def getName(path):
     return nameDir
 
 
-# cmd_cp = "mkdir -p "+scanTargetDir +" | cp -rf "+scanSrcPath+" "+ scanTargetDir
-# os.system(cmd_cp)
-shutil.copytree(scanSrcPath, scanTargetDir)
-shutil.copytree(scanSrcExtendPath,os.path.join(scanTargetDir,scanSrcExtendPath.split("/")[-1]))
-if outPods:
-    rmDir(scanTargetDir+"/Pods")  
+def main():
+    # cmd_cp = "mkdir -p "+scanTargetDir +" | cp -rf "+scanSrcPath+" "+ scanTargetDir
+    # os.system(cmd_cp)
+    shutil.copytree(scanSrcPath, scanTargetDir)
+    shutil.copytree(scanSrcExtendPath,os.path.join(scanTargetDir,scanSrcExtendPath.split("/")[-1]))
+    if outPods:
+        rmDir(scanTargetDir+"/Pods")  
 
 
-# scanImagePathCfg = [
-# (".imageset",
-# [scanTargetDir+"/YYMobile/Images.xcassets",
-# scanTargetDir+"/YYMobile/YingShou.xcassets",
-# scanTargetDir+"/YYMobile/TemplatePlugin/MakeFriends/yytp_makefriend.xcassets",
-# scanTargetDir+"/YYMobile/TemplatePlugin/OnePiece/OnePiece.xcassets",
-# scanTargetDir+"/YYMobile/TemplatePlugin/VoiceRoom/Images/VoiceRoom.xcassets"]
-# ),
-# (".png",
-# [scanTargetDir])#在无xcassets的情况下使用
-# ]
+    # scanImagePathCfg = [
+    # (".imageset",
+    # [scanTargetDir+"/YYMobile/Images.xcassets",
+    # scanTargetDir+"/YYMobile/YingShou.xcassets",
+    # scanTargetDir+"/YYMobile/TemplatePlugin/MakeFriends/yytp_makefriend.xcassets",
+    # scanTargetDir+"/YYMobile/TemplatePlugin/OnePiece/OnePiece.xcassets",
+    # scanTargetDir+"/YYMobile/TemplatePlugin/VoiceRoom/Images/VoiceRoom.xcassets"]
+    # ),
+    # (".png",
+    # [scanTargetDir])#在无xcassets的情况下使用
+    # ]
 
-xcassetsPathList = getDirOrFileBySuffix(scanTargetDir,".xcassets")
-print("有以下xcassets\n【{0}】".format(xcassetsPathList))
-scanImagePathCfg = [
-(".imageset",
-xcassetsPathList
-),
-(".png",
-[scanTargetDir])#在无xcassets的情况下使用
-]
+    xcassetsPathList = getDirOrFileBySuffix(scanTargetDir,".xcassets")
+    print("有以下xcassets\n【{0}】".format(xcassetsPathList))
+    scanImagePathCfg = [
+    (".imageset",
+    xcassetsPathList
+    ),
+    (".png",
+    [scanTargetDir])#在无xcassets的情况下使用
+    ]
 
-#白名单中的不会检查
-# whiteList = ["3rd/SSKeychain/Example/iOS/Images.xcassets",
-# "YYMobile/YingShou.xcassets",
-# ]
-whiteList = []
+    #白名单中的不会检查
+    # whiteList = ["3rd/SSKeychain/Example/iOS/Images.xcassets",
+    # "YYMobile/YingShou.xcassets",
+    # ]
+    whiteList = []
 
-def isInWhileList(curPath):
-    for white in whiteList:
-        if white in  curPath:
-            return True
-    return False
+    def isInWhileList(curPath):
+        for white in whiteList:
+            if white in  curPath:
+                return True
+        return False
 
 
-for cfg in scanImagePathCfg:
-    suffix = cfg[0]
-    for scanImagePath in cfg[1]:
-        if isInWhileList(scanImagePath):
-            continue
-        imageNamelist = []
-        print("开始检查【{0}】".format(scanImagePath))
-        imageNamelist = []
-        if os.path.isdir(scanImagePath) and suffix == ".imageset":
-            imageNamelist = getImagesetNamelist(scanImagePath,suffix)
-        else:
-            imageNamelist = getImageNamelist(scanImagePath,suffix)
-        invalidResList = scanAction(imageNamelist,scanTargetDir)
-        invalidResList.sort(key = lambda filemodel:(filemodel.file,filemodel.size),reverse = True)
-        #输出
-        result = "资源名\t大小K\t路径\n"
-        for model in invalidResList:
-            result += "{}\t{:.2f}\t{}\n".format(model.file,model.size/1024.0,model.path)
-        outFileName = getName(scanImagePath)
-        outputDir = outPath+"unuseRes"
-        os.system("mkdir -p "+outputDir)
-        outputFilePath = os.path.join(outputDir,outFileName+"_unuseRes.txt") 
-        output = open(outputFilePath, 'w') 
-        output.write(result)   
-        output.close()
-        rmDir(scanImagePath)
+    for cfg in scanImagePathCfg:
+        suffix = cfg[0]
+        for scanImagePath in cfg[1]:
+            if isInWhileList(scanImagePath):
+                continue
+            imageNamelist = []
+            print("开始检查【{0}】".format(scanImagePath))
+            imageNamelist = []
+            if os.path.isdir(scanImagePath) and suffix == ".imageset":
+                imageNamelist = getImagesetNamelist(scanImagePath,suffix)
+            else:
+                imageNamelist = getImageNamelist(scanImagePath,suffix)
+            invalidResList = scanAction(imageNamelist,scanTargetDir)
+            invalidResList.sort(key = lambda filemodel:(filemodel.file,filemodel.size),reverse = True)
+            #输出
+            result = "资源名\t大小K\t路径\n"
+            for model in invalidResList:
+                result += "{}\t{:.2f}\t{}\n".format(model.file,model.size/1024.0,model.path)
+            outFileName = getName(scanImagePath)
+            outputDir = outPath+"unuseRes"
+            os.system("mkdir -p "+outputDir)
+            outputFilePath = os.path.join(outputDir,outFileName+"_unuseRes.txt") 
+            output = open(outputFilePath, 'w') 
+            output.write(result)   
+            output.close()
+            rmDir(scanImagePath)
+    
+
+if __name__ == "__main__":
+    main()

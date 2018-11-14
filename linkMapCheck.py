@@ -3,9 +3,10 @@ import enum
 
 #分析可执行文件增量大小
 
-outPath = "/Users/xxx/Documents/sizetj/" #输出目录
-linkmapPath = "/Users/xxx/Documents/sizetj/7.9/LinkMap-normal-arm64.txt"
-compareLinkmapPath = "/Users/xxx/Documents/sizetj/7.8/LinkMap.txt"
+outPath = "/Users/luph/Documents/sizetj/" #输出目录
+linkmapPath = "/Users/luph/Documents/sizetj/7.12/YYMobile-LinkMap-normal-arm64.txt"
+compareLinkmapPath = "/Users/luph/Documents/sizetj/7.11/YYMobile-LinkMap-normal-arm64.txt"
+isGroud = True #是否分组统计
 
 class TagType(enum.IntEnum):
     Add = 4
@@ -71,6 +72,25 @@ def getLinkmapSymbolsMap(linkpath):
     linkfile.close()
     return symbolMap
 
+def getLinkmapSymbolsByGroupLib(symbolList):
+    ofileMap = {}
+    for symbol in symbolList:
+        index = symbol.path.find("(",0,len(symbol.path))
+        if index != -1  and symbol.path.find("TinyVideoStatic") == -1 and symbol.path.find("libChannelProject.a") == -1 : #是否为库中文件
+            groupPath = symbol.path[0:index]
+            if ofileMap.__contains__(groupPath):
+                ofModel = ofileMap[groupPath]
+                ofModel.size += symbol.size
+            else:
+                ofModel = SymbolModel()
+                ofModel.file = getFileName(groupPath)
+                ofModel.path = groupPath
+                ofModel.size = symbol.size
+                ofileMap[groupPath] = ofModel
+        else:
+            ofileMap[symbol.path] = symbol
+    return list(ofileMap.values())
+            
 
 def paserSizeToStr(size) :
     if  abs(size / 1024.0) > 1024.0:
@@ -111,10 +131,14 @@ def getSymbolSizeMap(symbols):
 
 comSymbolMap = getLinkmapSymbolsMap(compareLinkmapPath)
 comSymbols = list(comSymbolMap.values())
+if isGroud:
+    comSymbols = getLinkmapSymbolsByGroupLib(comSymbols)
 comSymbolSizeMap,cmpTotalSize = getSymbolSizeMap(comSymbols)
 
 symbolMap = getLinkmapSymbolsMap(linkmapPath)
 symbols =  list(symbolMap.values()) 
+if isGroud:
+    symbols = getLinkmapSymbolsByGroupLib(symbols)
 symbolSizeMap,totalSize = getSymbolSizeMap(symbols)
 
 for symbol in symbols :
@@ -146,7 +170,10 @@ for symbol in symbols :
     result += "{}\t{}\t{:.2f}\t{}\t{}\n".format(symbol.file,paserSizeToStr(symbol.size),symbol.thanNum/1024.0,getTagToStr(symbol.tagType),symbol.path)
 result += "\n总大小:{}\t增量:{}\n".format(paserSizeToStr(totalSize),paserSizeToStr(totalSize-cmpTotalSize))
 
-outputFilePath = os.path.join(outPath,"linkMapSize.txt") 
+outFileName = "linkMapSize.txt" 
+if isGroud :
+    outFileName = "linkMapSizeByGroud.txt"
+outputFilePath = os.path.join(outPath,outFileName) 
 output = open(outputFilePath, 'w') 
 output.write(result)   
 output.close()

@@ -2,8 +2,8 @@ import os
 
 #扫描重复（内容）资源
 
-outPath = "/Users/xxx/Documents/sizetj/" #输出目录
-scanTargetDir = "/Users/xxx/Documents/luph/svn/ios_7.9_composite_feature"
+outPath = "/Users/luph/Documents/sizetj/" #输出目录
+scanTargetDir = "/Users/luph/Documents/sizetj/entmobile-ios_7.10_composite_feature"
 
 def getDirOrFileBySuffix(scanImagePath,suffix):
     dirList = []

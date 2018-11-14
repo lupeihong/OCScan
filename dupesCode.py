@@ -2,9 +2,9 @@ import os
 import time
 import shutil
 
-outPath = "/Users/xxx/Documents/sizetj/" #输出目录
-scanSrcPath = "/Users/xxx/Documents/xxx/svn/ios_7.9_composite_feature" #源工程
-toolShellPath = "/Users/xx/Documents/sizetj/tool/pmd-bin-6.4.0/bin/run.sh" #需要pmd工具  https://sourceforge.net/projects/pmd/files/pmd/ 
+outPath = "/Users/luph/Documents/sizetj/" #输出目录
+scanSrcPath = "/Users/luph/Documents/luph/svn/entmobile-ios_7.12_composite_feature" #源工程
+toolShellPath = "/Users/luph/Documents/sizetj/tool/pmd-bin-6.4.0/bin/run.sh" #需要pmd工具  https://sourceforge.net/projects/pmd/files/pmd/ 
 
 minDupeLine = 120 #最小重复代码行
 

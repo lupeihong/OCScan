@@ -1,11 +1,12 @@
 import os
 import enum 
+import re
 
 #分析安装包大小
 
-outPath = "/Users/xxx/Documents/sizetj/" #输出目录
-appPath = "/Users/xxx/Documents/sizetj/7.9/Mobile.app"
-cmpPath = "/Users/xxx/Documents/sizetj/7.8/Mobile.app"
+outPath = "/Users/luph/Documents/sizetj/" #输出目录
+appPath = "/Users/luph/Documents/sizetj/7.12/Payload/YYMobile.app"
+cmpPath = "/Users/luph/Documents/sizetj/7.11/Payload/YYMobile.app"
 
 # TagType = Enum('TagType', ('up', 'down', 'add','other'))
 class TagType(enum.IntEnum):
@@ -68,14 +69,25 @@ def getTag(size,comSize):
         tag = TagType.Down
     return tag
         
+#是否命中不正确的nib文件（针对nib为文件夹而非文件的情况）
+def isInvalidNibFile(fileName):
+    if fileName == "runtime.nib":
+        return True
+    pattern = re.compile(r'objects\S+.nib') 
+    selall = pattern.findall(fileName)
+    if len(selall) > 0 :
+        return True
+    return False
 
 def getModelList(appPath):
     frameworkList = []
     modelList = []
     for root, dirs, files in os.walk(appPath):
         for path in dirs:
-            if path.endswith(".framework") or path.endswith(".storyboardc") :
+            if path.endswith(".framework") or path.endswith(".storyboardc") or path.endswith(".nib"):
                 dirPath = os.path.join(root,path)
+                if path.endswith(".nib") and dirPath.find(".storyboardc")!= -1: #排除storyboardc下的nib
+                    continue;
                 frameworkList.append(dirPath)
                 size = getdirsize(dirPath)
                 filemodel = FileModel()
@@ -86,6 +98,8 @@ def getModelList(appPath):
 
     for root, dirs, files in os.walk(appPath):
         for file in files:
+            if isInvalidNibFile(file) :
+                continue
             filePath = os.path.join(root,file)
             if not isInWhitelist(filePath,frameworkList):
                 size = os.path.getsize(filePath)

@@ -1,10 +1,9 @@
 import os
 import enum 
-#扫描重复（内容）资源
 
-outPath = "/Users/xxx/Documents/sizetj/" #输出目录
-scanTargetDir = "/Users/xxx/Documents/luph/svn/ios_7.8.10_maint"
-cmpTargetDir = "/Users/xxx/Documents/luph/svn/ios_7.8_maint"
+outPath = "/Users/luph/Documents/sizetj/" #输出目录
+scanTargetDir = "/Users/luph/Documents/luph/svn/entmobile-ios_7.11_maint"
+cmpTargetDir = "/Users/luph/Documents/luph/svn/entmobile-ios_7.10.1_maint"
 
 
 class TagType(enum.IntEnum):
