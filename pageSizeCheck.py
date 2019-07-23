@@ -4,9 +4,9 @@ import re
 
 #分析安装包大小
 
-outPath = "/Users/luph/Documents/sizetj/" #输出目录
-appPath = "/Users/luph/Documents/sizetj/7.12/Payload/YYMobile.app"
-cmpPath = "/Users/luph/Documents/sizetj/7.11/Payload/YYMobile.app"
+outPath = "/Users/luph/Documents/sizetj/tmp/" #输出目录
+appPath = "/Users/luph/Desktop/yymp/Payload/YYMP.app"
+cmpPath = ""
 
 # TagType = Enum('TagType', ('up', 'down', 'add','other'))
 class TagType(enum.IntEnum):
@@ -21,6 +21,7 @@ class FileModel :
     file = ""
     size = 0
     path = ""
+    moreThanSize = 0
     tagType = TagType.Other
 
 def isInWhitelist(path,flist):
@@ -110,54 +111,75 @@ def getModelList(appPath):
                 modelList.append(filemodel)
     return modelList
 
+    
 
-modelList = getModelList(appPath)
-cmpModelList =  getModelList(cmpPath)
+def runmain():
+    modelList = getModelList(appPath)
 
-modelMap = {}
-for model in modelList:
-    modelMap[model.path] = model.size
+    if cmpPath == "" :
+        modelList.sort(key = lambda filemodel:(filemodel.tagType,filemodel.size),reverse = True)
+        result = "文件\t大小\t路径\n"
+        for model in modelList:
+            result += "{}\t{:.2f}\t{}\n".format(model.file,model.size/1024,model.path)
+        
+        outputFilePath = os.path.join(outPath,"pageSize.txt") 
+        output = open(outputFilePath, 'w') 
+        output.write(result)   
+        output.close()
+        print("包大小扫描 结束")
+        return
 
-cmpTotal = 0
-cmpMap = {}
-for model in cmpModelList:
-    cmpMap[model.path] = model.size
-    cmpTotal += model.size
+    cmpModelList =  getModelList(cmpPath)
 
-#增量比较
-total = 0
-for model in modelList:
-    tagType = TagType.Other
-    moreThanSize = 0
-    if cmpMap.__contains__(model.path):
-        cmpSize = cmpMap[model.path]
-        moreThanSize = model.size - cmpSize
-        tagType = getTag(model.size,cmpSize)
-    else:
-        moreThanSize = model.size
-        tagType = TagType.Add    
-    model.moreThanSize = moreThanSize
-    model.tagType = tagType;
-    total += model.size
+    modelMap = {}
+    for model in modelList:
+        modelMap[model.path] = model.size
 
-#加入被删除的
-for model in cmpModelList:
-    if not modelMap.__contains__(model.path):
-        model.moreThanSize = -model.size
-        model.tagType = TagType.Del
-        modelList.append(model)
+    cmpTotal = 0
+    cmpMap = {}
+    for model in cmpModelList:
+        cmpMap[model.path] = model.size
+        cmpTotal += model.size
+
+    #增量比较
+    total = 0
+    for model in modelList:
+        tagType = TagType.Other
+        moreThanSize = 0
+        if cmpMap.__contains__(model.path):
+            cmpSize = cmpMap[model.path]
+            moreThanSize = model.size - cmpSize
+            tagType = getTag(model.size,cmpSize)
+        else:
+            moreThanSize = model.size
+            tagType = TagType.Add    
+        model.moreThanSize = moreThanSize
+        model.tagType = tagType;
+        total += model.size
+
+    #加入被删除的
+    for model in cmpModelList:
+        if not modelMap.__contains__(model.path):
+            model.moreThanSize = -model.size
+            model.tagType = TagType.Del
+            modelList.append(model)
+
+    modelList.sort(key = lambda filemodel:(filemodel.tagType,filemodel.moreThanSize),reverse = True)
+
+    result = "文件\t大小\t增量K\t标识\t路径\n"
+    for model in modelList:
+        result += "{}\t{}\t{:.2f}\t{}\t{}\n".format(model.file,paserSizeToStr(model.size),model.moreThanSize/1024.0,getTagToStr(model.tagType),model.path)
+    result += "总计:{}\t增量:{}".format(paserSizeToStr(total),paserSizeToStr(total-cmpTotal))
+    
+    outputFilePath = os.path.join(outPath,"pageSize.txt") 
+    output = open(outputFilePath, 'w') 
+    output.write(result)   
+    output.close()
+    print("包大小扫描 结束")
 
 
-modelList.sort(key = lambda filemodel:(filemodel.tagType,filemodel.moreThanSize),reverse = True)
 
-result = "文件\t大小\t增量K\t标识\t路径\n"
-for model in modelList:
-    result += "{}\t{}\t{:.2f}\t{}\t{}\n".format(model.file,paserSizeToStr(model.size),model.moreThanSize/1024.0,getTagToStr(model.tagType),model.path)
-result += "总计:{}\t增量:{}".format(paserSizeToStr(total),paserSizeToStr(total-cmpTotal))
 
-outputFilePath = os.path.join(outPath,"pageSize.txt") 
-output = open(outputFilePath, 'w') 
-output.write(result)   
-output.close()
-print("包大小扫描 结束")
 
+if __name__ == "__main__":
+    runmain()  
